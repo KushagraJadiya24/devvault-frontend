@@ -1,5 +1,16 @@
 const API_BASE = "https://devvault-backend-production-d964.up.railway.app";
 
+const safeParse = async (res: Response) => {
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.error("Failed to parse response:", text);
+    return null;
+  }
+};
+
 // ---- Auth ----
 export const registerUser = async (email: string, password: string) => {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
@@ -7,7 +18,7 @@ export const registerUser = async (email: string, password: string) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  return res.json();
+  return safeParse(res);
 };
 
 export const loginUser = async (email: string, password: string) => {
@@ -16,7 +27,7 @@ export const loginUser = async (email: string, password: string) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  return res.json();
+  return safeParse(res);
 };
 
 // ---- Projects ----
@@ -24,7 +35,11 @@ export const getProjects = async (token: string) => {
   const res = await fetch(`${API_BASE}/api/projects`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.json();
+  if (!res.ok) {
+    console.error("getProjects failed:", res.status, res.statusText);
+    return [];
+  }
+  return safeParse(res);
 };
 
 export const createProject = async (
@@ -40,14 +55,21 @@ export const createProject = async (
     },
     body: JSON.stringify({ name, description }),
   });
-  return res.json();
+  if (!res.ok) {
+    console.error("createProject failed:", res.status, res.statusText);
+    return null;
+  }
+  return safeParse(res);
 };
 
 export const deleteProject = async (token: string, id: number) => {
-  await fetch(`${API_BASE}/api/projects/${id}`, {
+  const res = await fetch(`${API_BASE}/api/projects/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (!res.ok) {
+    console.error("deleteProject failed:", res.status, res.statusText);
+  }
 };
 
 // ---- Secrets ----
@@ -55,7 +77,11 @@ export const getSecretsByProject = async (token: string, projectId: number) => {
   const res = await fetch(`${API_BASE}/api/secrets/project/${projectId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.json();
+  if (!res.ok) {
+    console.error("getSecretsByProject failed:", res.status, res.statusText);
+    return [];
+  }
+  return safeParse(res);
 };
 
 export const getSecretsByEnvironment = async (
@@ -69,7 +95,15 @@ export const getSecretsByEnvironment = async (
       headers: { Authorization: `Bearer ${token}` },
     },
   );
-  return res.json();
+  if (!res.ok) {
+    console.error(
+      "getSecretsByEnvironment failed:",
+      res.status,
+      res.statusText,
+    );
+    return [];
+  }
+  return safeParse(res);
 };
 
 export const createSecret = async (
@@ -89,7 +123,11 @@ export const createSecret = async (
     },
     body: JSON.stringify(data),
   });
-  return res.json();
+  if (!res.ok) {
+    console.error("createSecret failed:", res.status, res.statusText);
+    return null;
+  }
+  return safeParse(res);
 };
 
 export const updateSecret = async (
@@ -109,7 +147,11 @@ export const updateSecret = async (
       body: newValue,
     },
   );
-  return res.json();
+  if (!res.ok) {
+    console.error("updateSecret failed:", res.status, res.statusText);
+    return null;
+  }
+  return safeParse(res);
 };
 
 export const deleteSecret = async (
@@ -117,10 +159,16 @@ export const deleteSecret = async (
   projectId: number,
   name: string,
 ) => {
-  await fetch(`${API_BASE}/api/secrets/project/${projectId}/${name}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await fetch(
+    `${API_BASE}/api/secrets/project/${projectId}/${name}`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  if (!res.ok) {
+    console.error("deleteSecret failed:", res.status, res.statusText);
+  }
 };
 
 export const getSecretHistory = async (
@@ -134,7 +182,11 @@ export const getSecretHistory = async (
       headers: { Authorization: `Bearer ${token}` },
     },
   );
-  return res.json();
+  if (!res.ok) {
+    console.error("getSecretHistory failed:", res.status, res.statusText);
+    return [];
+  }
+  return safeParse(res);
 };
 
 // ---- Env Import/Export ----
@@ -154,7 +206,11 @@ export const importEnvFile = async (
       body: formData,
     },
   );
-  return res.json();
+  if (!res.ok) {
+    console.error("importEnvFile failed:", res.status, res.statusText);
+    return null;
+  }
+  return safeParse(res);
 };
 
 export const exportEnvFile = async (
@@ -168,6 +224,10 @@ export const exportEnvFile = async (
       headers: { Authorization: `Bearer ${token}` },
     },
   );
+  if (!res.ok) {
+    console.error("exportEnvFile failed:", res.status, res.statusText);
+    return null;
+  }
   return res.text();
 };
 
@@ -176,7 +236,11 @@ export const getAuditLogs = async (token: string) => {
   const res = await fetch(`${API_BASE}/api/audit`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.json();
+  if (!res.ok) {
+    console.error("getAuditLogs failed:", res.status, res.statusText);
+    return [];
+  }
+  return safeParse(res);
 };
 
 // ---- Token helpers ----
