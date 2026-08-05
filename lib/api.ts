@@ -61,6 +61,13 @@ export const createProject = async (
   }
   return safeParse(res);
 };
+export const getProjectById = async (token: string, id: number) => {
+  const res = await fetch(`${API_BASE}/api/projects/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return null;
+  return safeParse(res);
+};
 
 export const deleteProject = async (token: string, id: number) => {
   const res = await fetch(`${API_BASE}/api/projects/${id}`, {
