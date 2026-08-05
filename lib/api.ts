@@ -90,7 +90,20 @@ export const getSecretsByProject = async (token: string, projectId: number) => {
   }
   return safeParse(res);
 };
-
+export const getSecretByName = async (
+  token: string,
+  projectId: number,
+  name: string,
+) => {
+  const res = await fetch(
+    `${API_BASE}/api/secrets/project/${projectId}/${name}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  if (!res.ok) return null;
+  return res.text();
+};
 export const getSecretsByEnvironment = async (
   token: string,
   projectId: number,

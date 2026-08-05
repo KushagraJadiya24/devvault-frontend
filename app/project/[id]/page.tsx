@@ -12,11 +12,11 @@ import {
   exportEnvFile,
   getToken,
   getProjectById,
+  getSecretByName,
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +55,11 @@ export default function ProjectPage() {
   const [editValue, setEditValue] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const [copiedName, setCopiedName] = useState<string | null>(null);
+  const [revealedSecret, setRevealedSecret] = useState<{
+    name: string;
+    value: string;
+  } | null>(null);
 
   // Create form state
   const [newName, setNewName] = useState("");
@@ -124,6 +129,39 @@ export default function ProjectPage() {
     if (!token) return;
     await deleteSecret(token, projectId, name);
     fetchSecrets();
+  };
+
+  const handleReveal = async (name: string) => {
+    const token = getToken();
+    if (!token) return;
+    if (revealedSecret?.name === name) {
+      setRevealedSecret(null);
+      return;
+    }
+    const value = await getSecretByName(token, projectId, name);
+    if (value) setRevealedSecret({ name, value });
+  };
+
+  const handleCopy = async (name: string) => {
+    const token = getToken();
+    if (!token) return;
+    const value = await getSecretByName(token, projectId, name);
+    if (value) {
+      try {
+        await navigator.clipboard.writeText(value);
+        setCopiedName(name);
+        setTimeout(() => setCopiedName(null), 2000);
+      } catch {
+        const el = document.createElement("textarea");
+        el.value = value;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+        setCopiedName(name);
+        setTimeout(() => setCopiedName(null), 2000);
+      }
+    }
   };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -313,6 +351,11 @@ export default function ProjectPage() {
                 <span className="text-white font-mono text-sm">
                   {secret.name}
                 </span>
+                {revealedSecret?.name === secret.name && (
+                  <p className="text-emerald-400/70 font-mono text-xs mt-1 break-all">
+                    {revealedSecret.value}
+                  </p>
+                )}
               </div>
               <div className="col-span-3">
                 <span
@@ -334,6 +377,26 @@ export default function ProjectPage() {
                 </span>
               </div>
               <div className="col-span-1 flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => handleReveal(secret.name)}
+                  className={`text-xs transition-colors ${
+                    revealedSecret?.name === secret.name
+                      ? "text-emerald-400"
+                      : "text-white/30 hover:text-white"
+                  }`}
+                >
+                  👁
+                </button>
+                <button
+                  onClick={() => handleCopy(secret.name)}
+                  className={`text-xs transition-colors ${
+                    copiedName === secret.name
+                      ? "text-emerald-400"
+                      : "text-white/30 hover:text-white"
+                  }`}
+                >
+                  {copiedName === secret.name ? "Copied!" : "Copy"}
+                </button>
                 <button
                   onClick={() => {
                     setEditSecret(secret);
