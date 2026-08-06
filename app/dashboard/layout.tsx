@@ -45,6 +45,12 @@ export default function DashboardLayout({
           >
             Audit Log
           </a>
+          <a
+            href="/team"
+            className="text-white/40 hover:text-white text-sm transition-colors"
+          >
+            Team
+          </a>
           <button
             onClick={handleLogout}
             className="text-white/40 hover:text-red-400 text-sm transition-colors"
