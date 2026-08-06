@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔐 DevVault Frontend
 
-## Getting Started
+> The official Next.js dashboard for [DevVault](https://github.com/KushagraJadiya24/devvault-backend) — an open-source self-hosted secrets manager for engineering teams.
 
-First, run the development server:
+## 🌐 Live Demo
+**Frontend:** https://devvault-frontend.vercel.app
+
+**Backend API Docs:** https://devvault-backend-production-d964.up.railway.app/swagger-ui/index.html
+
+---
+
+## 🚀 What is this?
+
+This is the frontend for DevVault — a clean, minimal dashboard built with Next.js 15 and shadcn/ui that lets your team manage secrets without touching the API directly.
+
+**Pages:**
+- `/login` — Sign in to your vault
+- `/register` — Create account (invite only after first user)
+- `/dashboard` — All projects overview
+- `/project/[id]` — Secrets management per project with environment filtering
+- `/audit` — Full audit trail of every access
+- `/team` — ADMIN controls who can join
+
+---
+
+## ✨ Features
+
+- 🌑 Clean dark UI built with Tailwind CSS + shadcn/ui
+- 📁 Organize secrets by project and environment (dev/staging/prod)
+- 👁 Reveal secrets on demand — never stored in the browser
+- 📋 One-click copy to clipboard
+- ↑ Import `.env` files directly from the UI
+- ↓ Export secrets as `.env` files
+- 📋 Live audit log with color-coded actions
+- 👥 Team management — ADMIN invites teammates by email
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Styling | Tailwind CSS |
+| Components | shadcn/ui (Radix UI) |
+| Font | Inter |
+| Deployment | Vercel |
+
+---
+
+## 🚀 Run Locally
+
+### Prerequisites
+- Node.js 18+
+- A running DevVault backend (see [devvault-backend](https://github.com/KushagraJadiya24/devvault-backend))
+
+### Setup
 
 ```bash
+git clone https://github.com/KushagraJadiya24/devvault-frontend.git
+cd devvault-frontend
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Point to your backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In `lib/api.ts`, update `API_BASE`:
 
-## Learn More
+```typescript
+const API_BASE = "https://your-backend-url.com"
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔑 First Time Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Make sure your DevVault backend is running
+2. Go to `/register` — first user automatically becomes **ADMIN**
+3. Go to **Team** tab → add your teammates' emails
+4. Share the URL — teammates register and get **MEMBER** access
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📸 Screenshots
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Dashboard — projects overview
+
+> Project page — secrets with environment tabs
+
+> Audit log — color coded actions
+
+> Team management — ADMIN controls access
+
+---
+
+## 👤 Author
+
+**Kushagra Jadiya**
+- GitHub: [@KushagraJadiya24](https://github.com/KushagraJadiya24)
+- LinkedIn: https://www.linkedin.com/in/kushagra-jadiya/
+
+---
+
+## 📄 License
+MIT
