@@ -276,3 +276,33 @@ export const setToken = (token: string) => {
 export const removeToken = () => {
   localStorage.removeItem("token");
 };
+
+// Add these to lib/api.ts
+
+export const getAllowedEmails = async (token: string) => {
+  const res = await fetch(`${API_BASE}/api/admin/allowed-emails`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return [];
+  return safeParse(res);
+};
+
+export const addAllowedEmail = async (token: string, email: string) => {
+  const res = await fetch(`${API_BASE}/api/admin/allowed-emails`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) return null;
+  return safeParse(res);
+};
+
+export const removeAllowedEmail = async (token: string, id: number) => {
+  await fetch(`${API_BASE}/api/admin/allowed-emails/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
